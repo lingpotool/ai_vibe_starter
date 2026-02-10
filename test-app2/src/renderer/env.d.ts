@@ -14,6 +14,7 @@ interface Window {
       close: () => void
       isMaximized: () => Promise<boolean>
       onMaximizeChange: (callback: (maximized: boolean) => void) => void
+      setTitleBarOverlay: (options: { color?: string; symbolColor?: string; height?: number }) => Promise<void>
     }
     storage: {
       get: <T = unknown>(key: string) => Promise<T>
