@@ -1,0 +1,46 @@
+{
+  "name": "my-electron-app",
+  "version": "0.1.0",
+  "description": "Electron + Vue3 + shadcn-vue Desktop Application",
+  "main": "./out/main/index.js",
+  "scripts": {
+    "dev": "electron-vite dev",
+    "build": "electron-vite build",
+    "preview": "electron-vite preview",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
+  },
+  "dependencies": {
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "lucide-vue-next": "^0.563.0",
+    "pinia": "^3.0.4",
+    "pinia-plugin-persistedstate": "^4.7.1",
+    "radix-vue": "^1.9.17",
+    "tailwind-merge": "^3.4.0",
+    "vue": "^3.5.28",
+    "vue-i18n": "^11.2.8",
+    "vue-router": "^4.6.4"
+  },
+  "devDependencies": {
+    "@electron-toolkit/preload": "^3.0.2",
+    "@electron-toolkit/utils": "^4.0.0",
+    "@tailwindcss/vite": "^4.1.18",
+    "@vitejs/plugin-vue": "^6.0.4",
+    "electron": "^40.2.1",
+    "electron-builder": "^26.7.0",
+    "electron-vite": "^5.0.0",
+    "tailwindcss": "^4.1.18",
+    "typescript": "^5.9.3",
+    "vite": "^6.4.1",
+    "vue-tsc": "^3.2.4"
+  },
+  "build": {
+    "appId": "com.app.my-electron-app",
+    "productName": "My Electron App",
+    "directories": { "output": "release" },
+    "win": { "target": ["nsis"], "icon": "build/icon.ico" },
+    "mac": { "target": ["dmg"], "icon": "build/icon.icns" },
+    "linux": { "target": ["AppImage"], "icon": "build/icon.png" }
+  }
+}

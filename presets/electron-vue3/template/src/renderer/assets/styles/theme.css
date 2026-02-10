@@ -1,0 +1,110 @@
+/*
+ * Design Tokens — 主题变量
+ * macOS-inspired 精致质感设计系统
+ */
+
+:root {
+  /* Primary — 柔和蓝色 */
+  --color-primary-50: #eef4ff;
+  --color-primary-100: #d9e6ff;
+  --color-primary-200: #bcd4ff;
+  --color-primary-300: #8ebaff;
+  --color-primary-400: #5996ff;
+  --color-primary-500: #3478f6;
+  --color-primary-600: #1b5ceb;
+  --color-primary-700: #1549d8;
+  --color-primary-800: #173daf;
+  --color-primary-900: #19378a;
+
+  /* Surfaces — 多层次半透明 */
+  --color-surface: #ffffff;
+  --color-surface-secondary: #f5f5f7;
+  --color-surface-elevated: rgba(255, 255, 255, 0.72);
+  --color-surface-overlay: rgba(255, 255, 255, 0.6);
+
+  /* Borders — 极细微 */
+  --color-border: rgba(0, 0, 0, 0.08);
+  --color-border-light: rgba(0, 0, 0, 0.04);
+  --color-border-strong: rgba(0, 0, 0, 0.12);
+
+  /* Content */
+  --color-content: #1d1d1f;
+  --color-content-secondary: #6e6e73;
+  --color-content-tertiary: #aeaeb2;
+
+  /* Sidebar */
+  --sidebar-width: 220px;
+  --sidebar-collapsed-width: 64px;
+  --sidebar-bg: rgba(245, 245, 247, 0.65);
+
+  /* Title bar */
+  --titlebar-height: 52px;
+  --titlebar-bg: rgba(255, 255, 255, 0.72);
+
+  /* Spacing */
+  --spacing-page: 24px;
+
+  /* Transitions */
+  --transition-fast: 150ms ease;
+  --transition-normal: 250ms ease;
+  --transition-slow: 350ms ease;
+
+  /* Radius */
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
+
+  /* Shadows — 柔和多层 */
+  --shadow-xs: 0 0.5px 1px rgba(0,0,0,0.04);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 0.5px 1px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.06), 0 1px 3px rgba(0,0,0,0.04);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.08), 0 2px 6px rgba(0,0,0,0.04);
+  --shadow-card: 0 0.5px 0 rgba(0,0,0,0.04), 0 1px 3px rgba(0,0,0,0.04);
+
+  /* Element Plus overrides */
+  --el-color-primary: var(--color-primary-500);
+  --el-color-primary-light-3: var(--color-primary-300);
+  --el-color-primary-light-5: var(--color-primary-200);
+  --el-color-primary-light-7: var(--color-primary-100);
+  --el-color-primary-light-9: var(--color-primary-50);
+  --el-color-primary-dark-2: var(--color-primary-700);
+  --el-border-radius-base: var(--radius-md);
+  --el-font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
+
+/* Dark mode — 通透暗色 */
+.dark {
+  --color-primary-50: rgba(52, 120, 246, 0.08);
+  --color-primary-100: rgba(52, 120, 246, 0.14);
+  --color-primary-200: rgba(52, 120, 246, 0.22);
+  --color-primary-300: #5996ff;
+  --color-primary-400: #6eaaff;
+  --color-primary-500: #6eaaff;
+  --color-primary-600: #8ebaff;
+  --color-primary-700: #bcd4ff;
+  --color-primary-800: #d9e6ff;
+  --color-primary-900: #eef4ff;
+
+  --color-surface: #1c1c1e;
+  --color-surface-secondary: #2c2c2e;
+  --color-surface-elevated: rgba(44, 44, 46, 0.72);
+  --color-surface-overlay: rgba(44, 44, 46, 0.6);
+
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-border-light: rgba(255, 255, 255, 0.04);
+  --color-border-strong: rgba(255, 255, 255, 0.12);
+
+  --color-content: #f5f5f7;
+  --color-content-secondary: #a1a1a6;
+  --color-content-tertiary: #636366;
+
+  --sidebar-bg: rgba(28, 28, 30, 0.65);
+  --titlebar-bg: rgba(28, 28, 30, 0.72);
+
+  --shadow-xs: 0 0.5px 1px rgba(0,0,0,0.2);
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.24), 0 0.5px 1px rgba(0,0,0,0.16);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.24), 0 1px 3px rgba(0,0,0,0.16);
+  --shadow-lg: 0 8px 24px rgba(0,0,0,0.32), 0 2px 6px rgba(0,0,0,0.16);
+  --shadow-card: 0 0.5px 0 rgba(255,255,255,0.04), 0 1px 3px rgba(0,0,0,0.2);
+}

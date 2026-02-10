@@ -1,0 +1,111 @@
+@import './theme.css';
+@import './element-override.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===== Base ===== */
+html, body, #app {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--color-surface);
+  color: var(--color-content);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-size: 13px;
+  line-height: 1.5;
+  letter-spacing: -0.01em;
+}
+
+/* ===== Glass ===== */
+:root {
+  --glass-rgb: 255, 255, 255;
+}
+.dark {
+  --glass-rgb: 44, 44, 46;
+}
+
+/* ===== Scrollbar — macOS 风格 ===== */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-radius: 3px;
+  transition: background 0.2s;
+}
+*:hover > ::-webkit-scrollbar-thumb,
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.12);
+}
+.dark ::-webkit-scrollbar-thumb:hover,
+.dark *:hover > ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* ===== Title bar drag ===== */
+.titlebar-drag {
+  -webkit-app-region: drag;
+}
+.titlebar-no-drag {
+  -webkit-app-region: no-drag;
+}
+
+/* ===== Glass effect ===== */
+.glass {
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+}
+
+/* ===== Page transitions ===== */
+.page-enter-active {
+  animation: pageIn 0.2s ease-out;
+}
+.page-leave-active {
+  animation: pageOut 0.12s ease-in;
+}
+@keyframes pageIn {
+  0% { opacity: 0; transform: translateY(4px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+@keyframes pageOut {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* ===== Sidebar transition ===== */
+.sidebar-transition {
+  transition: width var(--transition-normal),
+              padding var(--transition-normal);
+}
+
+/* ===== Utility animations ===== */
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+@keyframes fadeIn {
+  0% { opacity: 0; transform: translateY(4px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.animate-slide-up {
+  animation: slideUp 0.3s ease-out both;
+}
+@keyframes slideUp {
+  0% { opacity: 0; transform: translateY(8px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== Focus ring ===== */
+*:focus-visible {
+  outline: 2px solid var(--color-primary-400);
+  outline-offset: 1px;
+  border-radius: 4px;
+}
