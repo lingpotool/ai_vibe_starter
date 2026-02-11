@@ -1,111 +1,173 @@
-# AI Project Bootstrap Protocol (AIPB)
+# AI Vibe Starter — AI 驱动的项目模板集合
 
-一个通用的 AI 项目启动协议。让任何 AI 编程工具在启动项目前，先和用户对齐技术选型、设计风格和开发规范，然后严格按照约定来开发。
+一套经过精心设计的跨平台应用模板，拥有完整的设计令牌系统、毛玻璃视觉风格和企业级基础设施。
+拉取即用，配合任何 AI 编码工具（Kiro、Cursor、Copilot、Claude 等）直接开发业务功能。
 
-## 解决什么问题
+## 可用模板
 
-Vibe coding 时代，用户只需要描述想法，AI 来写代码。但 AI 每次启动项目都在"猜"：
-- 用什么框架？随机选
-- 什么 UI 风格？看心情
-- 代码怎么组织？每次不一样
-- 换个 AI 工具？之前的约定全丢
+| 模板 | 技术栈 | 平台 | 说明 |
+|------|--------|------|------|
+| [`test-app2`](#electron-vue3-桌面端) | Electron + Vue3 + Tailwind v4 | Windows / macOS / Linux | 桌面应用，NavRail + 玻璃态 + 暗色模式 |
+| [`test_app3`](#flutter-桌面端) | Flutter + Riverpod + GoRouter | Windows / macOS / Linux | 桌面应用，NavRail + 玻璃态 + 系统托盘 |
+| [`mobile_app`](#flutter-移动端) | Flutter + Riverpod + GoRouter | Android / iOS | 移动应用，底部导航 + 玻璃态 |
 
-AIPB 解决这个问题：**在动手之前，先把规矩定好。**
+> `creatorino/` 是基于 mobile_app 模板创建的独立项目实例，可作为参考。
 
-## 支持的项目类型
+## 每个模板都包含什么
 
-- 网站 / 落地页 / 博客
-- Web 应用 / SaaS / 管理后台
-- 后端 API / 微服务
-- 移动端 App（iOS / Android / 跨平台）
-- 命令行工具 (CLI)
-- 桌面应用（Electron / Tauri / Qt）
-- 微信小程序 / 支付宝小程序 / 跨端小程序
-- 游戏开发（Unity / Unreal / Godot / Web 游戏）
-- AI / 机器学习项目（模型训练、LLM 应用、数据处理）
-- 嵌入式 / IoT（Arduino / ESP32 / 树莓派）
-- 浏览器扩展（Chrome / Firefox / Edge）
-- 库 / SDK / npm 包 / PyPI 包
-- 数据工程（ETL、数据管道、数据分析）
-- 区块链 / Web3（智能合约、DApp）
-- 平台插件（VS Code / Figma / Slack / Discord 等）
-- Monorepo 多包项目
+所有模板共享统一的设计语言和基础设施：
 
-## 怎么用
+**设计令牌系统（禁止硬编码）**
+- 色彩系统 — 亮/暗双主题，oklch 色彩空间
+- 排版系统 — Noto Sans SC + Inter + JetBrains Mono，7级字号阶梯
+- 间距系统 — 4dp/4px 网格，9级阶梯
+- 圆角系统 — 6级层级
+- 动效系统 — 4级时长 + 标准曲线
+- 阴影系统 — 3级层级，亮暗适配
+- 交互区域 — 平台适配的最小点击/触控目标
 
-### 1. 启动新项目时
+**基础设施**
+- 结构化日志（dev→控制台，release→文件）
+- 全局错误处理
+- 事件总线
+- 键值存储
+- 国际化（中/英）
+- 路由 + 导航
 
-把 `BOOTSTRAP.md` 文件丢给你的 AI 工具（Kiro、Cursor、Copilot、Claude、ChatGPT 等），告诉它：
+**视觉风格**
+- 毛玻璃/玻璃态（Glassmorphism）
+- 多层径向渐变背景
+- macOS 级别的视觉质感
 
-> 按照 BOOTSTRAP.md 的流程，帮我启动一个新项目。
+## 如何使用
 
-AI 会引导你完成几轮简单的对话，帮你确定技术选型和开发规范。
+### 1. 拉取项目
 
-### 2. 讨论完成后
-
-AI 会生成一份 `PROJECT_RULES.md` 文件，放在项目根目录。这份文件包含了所有决策。
-
-### 3. 后续开发
-
-任何 AI 工具在开发这个项目时，先读 `PROJECT_RULES.md`，就知道该遵循什么规则。
-
-## 文件说明
-
-```
-├── BOOTSTRAP.md              # 项目启动引导流程（给 AI 读的）
-├── topics/                   # 各主题的知识库（AI 推荐方案时参考）
-│   ├── tech-stack.md         # 技术选型：框架、语言、数据库、认证...
-│   ├── ui-design.md          # UI 设计：组件库、样式、颜色、图标、动画...
-│   ├── project-structure.md  # 项目结构：20+ 种项目类型的目录模板
-│   ├── code-standards.md     # 代码规范：格式化、错误处理、测试、文档...
-│   └── deployment.md         # 部署方案：16+ 种项目类型的部署指南
-├── templates/
-│   └── PROJECT_RULES.md      # 项目规则模板（讨论完后生成）
-├── presets/                   # 项目预设（开箱即用的完整代码模板）
-│   └── electron-vue3/        # Electron + Vue3 桌面应用预设
-│       ├── PRESET.md          # 预设说明
-│       ├── PROJECT_RULES.md   # 项目规则
-│       └── template/          # 可直接运行的项目代码
-└── examples/                 # 已填好的示例
-    ├── nextjs-saas.md        # Next.js SaaS 应用
-    ├── python-api.md         # Python API 服务
-    ├── wechat-miniprogram.md # 微信小程序
-    ├── unity-game.md         # Unity 游戏
-    ├── ai-llm-app.md        # AI / LLM 应用
-    ├── chrome-extension.md   # 浏览器扩展
-    ├── iot-smart-home.md     # IoT 智能家居
-    ├── npm-library.md        # npm 工具库
-    └── web3-dapp.md          # Web3 DApp
+```bash
+git clone https://github.com/lingpotool/ai_vibe_starter.git
 ```
 
-## 项目预设 (Presets)
+### 2. 选择模板，复制到你的项目目录
 
-除了引导式讨论，AIPB 还提供**开箱即用的项目预设**——完整的可运行代码模板，拉下来改个名字就能跑。
+```bash
+# 例如：基于 Flutter 移动端模板创建新项目
+cp -r ai_vibe_starter/mobile_app  my_new_app
 
-用户看到基础效果后，只需要专注在菜单中每个具体功能的开发。
+# 或者基于 Electron Vue3 桌面端模板
+cp -r ai_vibe_starter/test-app2  my_desktop_app
 
-### 可用预设
+# 或者基于 Flutter 桌面端模板
+cp -r ai_vibe_starter/test_app3  my_desktop_app
+```
 
-| 预设 | 技术栈 | 说明 |
-|------|--------|------|
-| `electron-vue3` | Electron + Vue3 + Element Plus + Tailwind | 桌面应用，含侧边栏/标签页/暗色模式/自定义标题栏 |
+### 3. 修改项目名称和包名
 
-> 更多预设持续添加中...
+根据模板类型修改对应的配置文件（`pubspec.yaml` / `package.json`、Android/iOS 配置等）。
 
-### 使用预设
+### 4. 安装依赖并运行
 
-1. 复制 `presets/[预设名]/template/` 到你的项目目录
-2. 修改 `package.json` 中的项目名称
-3. `pnpm install && pnpm dev`
-4. 在 `views/` 中添加业务页面，在 `router/modules/` 中注册路由
-5. 侧边栏菜单自动生成
+```bash
+# Flutter 模板
+flutter pub get
+flutter run
 
-每个预设都附带对应的 `PROJECT_RULES.md`，AI 工具读取后就知道该怎么开发。
+# Electron Vue3 模板
+pnpm install
+pnpm dev
+```
 
-## 设计原则
+### 5. 让 AI 读取 ARCHITECTURE.md 开始开发
 
-- **AI 工具无关** — 纯 Markdown，任何 AI 都能读懂
-- **对话驱动** — 不是填表，是和 AI 讨论后产出决策
-- **用户不需要懂技术** — AI 负责推荐和解释，用户只需要说感觉
-- **一次决策，持续生效** — 生成的规则文件在整个项目生命周期内有效
-- **全类型覆盖** — 从网站到嵌入式，从游戏到区块链，都能用
+每个模板根目录都有 `ARCHITECTURE.md`，这是 AI 助手的上下文文件。
+让 AI 读取后，它就知道项目的架构、规范、设计令牌、跨平台要求，可以直接在 `features/`（或 `views/`）下添加业务功能。
+
+```
+# 告诉你的 AI 工具：
+读取 ARCHITECTURE.md，然后帮我开发 XXX 功能。
+```
+
+---
+
+## 模板详情
+
+### Electron Vue3 桌面端
+
+`test-app2/` — Electron + Vue 3 + Tailwind CSS v4
+
+- 三平台：Windows / macOS / Linux
+- NavRail 56px 侧边栏 + 玻璃态
+- 系统级窗口模糊（macOS vibrancy / Windows Mica）
+- 自定义标题栏（平台自适应）
+- 系统托盘
+- IPC 三进程架构（Main / Preload / Renderer）
+- Pinia 状态管理 + 持久化
+- vue-i18n 国际化
+- 设计令牌：CSS 自定义属性（`theme.css`）
+
+```bash
+cd test-app2
+pnpm install
+pnpm dev
+```
+
+### Flutter 桌面端
+
+`test_app3/` — Flutter + Riverpod 3.x + GoRouter
+
+- 三平台：Windows / macOS / Linux
+- NavRail 56px 侧边栏 + 玻璃态
+- 自定义标题栏 + 窗口控制按钮
+- 系统托盘
+- 圆形揭示主题切换动画
+- 184 个测试（含属性测试）
+- 设计令牌：Dart 静态类（`app_typography.dart` 等）
+
+```bash
+cd test_app3
+flutter pub get
+flutter run -d windows   # 或 macos / linux
+```
+
+### Flutter 移动端
+
+`mobile_app/` — Flutter + Riverpod 3.x + GoRouter
+
+- 双平台：Android / iOS
+- 底部导航 + 毛玻璃
+- SafeArea + 状态栏适配
+- 与桌面端共享设计语言
+- 设计令牌：Dart 静态类（与桌面端一致的 API，移动端适配的值）
+
+```bash
+cd mobile_app
+flutter pub get
+flutter run
+```
+
+---
+
+## 项目结构
+
+```
+ai_vibe_starter/
+├── test-app2/          # Electron Vue3 桌面端模板
+├── test_app3/          # Flutter 桌面端模板
+├── mobile_app/         # Flutter 移动端模板
+├── creatorino/         # 独立项目实例（基于 mobile_app）
+├── presets/            # [暂停] 提示词驱动的项目预设
+├── topics/             # [暂停] 技术选型知识库
+├── examples/           # [暂停] 项目规则示例
+├── templates/          # [暂停] 规则模板
+└── BOOTSTRAP.md        # [暂停] 提示词启动协议
+```
+
+> 标记 `[暂停]` 的是早期的提示词驱动方案（通过 AI 对话生成项目规则）。
+> 当前推荐直接使用上面的模板，拉取即用。
+
+## 设计理念
+
+- **拉取即用** — 不需要通过提示词生成，直接复制模板开始开发
+- **AI 友好** — 每个模板都有 `ARCHITECTURE.md`，AI 读取后即可理解全貌
+- **跨平台优先** — 每个模板都强制要求多平台一致性
+- **设计令牌驱动** — 所有视觉参数从令牌引用，禁止硬编码
+- **毛玻璃统一风格** — 所有模板共享 macOS 级别的玻璃态视觉语言
