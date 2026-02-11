@@ -3,14 +3,89 @@
 > 本文档是 AI 助手（任何工具）的上下文加载文件。
 > 加载后即可理解项目全貌、架构约束、开发规范，并开始开发具体功能。
 > 适用于 Cursor、Kiro、Copilot、Claude、ChatGPT 等所有 AI 编码工具。
+> **核心原则：本项目是 Windows / macOS / Linux 三平台桌面应用，所有功能必须同时在三个平台上正常运行。**
 
 ---
 
 ## 一、项目定位
 
-Flutter 桌面应用企业级模板，提供 macOS 级别的视觉质感（毛玻璃/高斯模糊/玻璃态），跨平台支持 Windows / macOS / Linux。
+Flutter 桌面应用企业级模板，提供 macOS 级别的视觉质感（毛玻璃/高斯模糊/玻璃态），跨平台支持 **Windows / macOS / Linux**。
 
 核心基础设施已就绪：结构化日志、全局错误处理、事件总线、键值存储、系统托盘、路由观察、UI 组件库。开发者只需在 `features/` 下添加业务功能。
+
+**跨平台是本项目的第一优先级。** 任何功能、任何代码变更都必须确保 Windows / macOS / Linux 三平台可用。
+不存在"先做一个平台再适配另一个"的情况 — 每次提交都必须是三平台完整可用的。
+
+---
+
+## 一.五、跨平台开发规范（最重要）
+
+### 核心原则
+
+每开发一个功能，必须按以下清单逐项检查：
+
+| 检查项 | 说明 |
+|--------|------|
+| **窗口标题栏** | macOS 有红绿灯（38px），Windows 有最小化/最大化/关闭（44px），Linux 同 Windows |
+| **系统托盘** | 三平台 API 差异大，使用 `tray_manager` 统一封装 |
+| **文件路径** | 使用 `path_provider`，不要硬编码路径分隔符（`/` vs `\`） |
+| **快捷键** | macOS 用 `Cmd`，Windows/Linux 用 `Ctrl`，需分别注册 |
+| **字体渲染** | 三平台渲染引擎不同，macOS 最精细，Windows 次之，Linux 依赖系统配置 |
+| **窗口管理** | 最小尺寸、最大化行为、全屏行为三平台有差异 |
+| **原生插件** | 引入任何插件前检查其 platform support（windows + macos + linux 都有） |
+| **系统通知** | `local_notifier` 三平台行为不同，需分别测试 |
+| **文件对话框** | 打开/保存对话框的过滤器格式三平台不同 |
+| **深色模式** | macOS 系统级深色模式 vs Windows 注册表 vs Linux 桌面环境 |
+
+### 平台差异处理模式
+
+```dart
+// ✅ 正确：使用已有的 Provider 判断平台
+final isMac = ref.watch(isMacProvider);
+final platform = ref.watch(platformProvider);
+
+if (isMac) {
+  // macOS 特有逻辑（如红绿灯区域预留）
+} else {
+  // Windows / Linux 逻辑（如自定义窗口按钮）
+}
+
+// ❌ 禁止：只考虑一个平台
+// 禁止写 Windows-only 的代码而不处理 macOS 和 Linux
+```
+
+### 常见跨平台陷阱
+
+| 陷阱 | Windows | macOS | Linux | 解决方案 |
+|------|---------|-------|-------|----------|
+| 标题栏高度 | 44px（自定义按钮） | 38px（红绿灯） | 44px | `AppTouch.titleBarHeightWin` / `titleBarHeightMac` |
+| 窗口拖拽 | `DragToMoveArea` | `DragToMoveArea` | `DragToMoveArea` | `window_manager` 统一处理 |
+| 最小化到托盘 | 托盘图标 + 右键菜单 | Dock 图标 + 菜单栏 | 托盘图标 | `tray_manager` 统一封装 |
+| 文件路径分隔符 | `\` | `/` | `/` | 使用 `path` 包或 `path_provider` |
+| 系统字体 | 微软雅黑 | 苹方 | 随桌面环境 | Google Fonts 统一（Noto Sans SC） |
+| 窗口圆角 | Windows 11 有，10 无 | 始终有 | 随桌面环境 | 不依赖系统圆角，自绘 |
+| 高 DPI | 缩放比例不同 | Retina 2x | 随设置 | Flutter 自动处理，但需测试布局 |
+
+### 插件选择规范
+
+引入新的 Flutter 桌面插件时，必须检查：
+
+1. **平台支持**：`pub.dev` 页面确认 Windows ✅ + macOS ✅ + Linux ✅
+2. **维护状态**：最近 6 个月内有更新
+3. **原生依赖**：是否引入 CMake / CocoaPods / apt 依赖？会不会与现有依赖冲突？
+4. **最低版本**：是否要求提高 Windows SDK / macOS deployment target？
+
+### 平台特定配置文件
+
+| 文件 | 平台 | 何时需要修改 |
+|------|------|-------------|
+| `windows/runner/main.cpp` | Windows | 窗口初始化、图标 |
+| `windows/runner/Runner.rc` | Windows | 应用名称、版本、图标资源 |
+| `macos/Runner/Info.plist` | macOS | 权限、URL Scheme、沙盒配置 |
+| `macos/Runner/*.entitlements` | macOS | 网络、文件访问、App Groups |
+| `linux/my_application.cc` | Linux | 窗口初始化 |
+
+**规则：修改任何平台配置文件时，必须同时检查其他两个平台是否需要对应修改。**
 
 ---
 
@@ -513,16 +588,17 @@ fvm flutter build linux
 
 ## 十、开发规范（必须遵守）
 
-1. **状态管理**：使用 Riverpod 3.x `Notifier` 模式，禁止 `StateNotifier`
-2. **路由**：使用 GoRouter 声明式配置，新页面加入 ShellRoute
-3. **页面位置**：所有业务页面放在 `features/功能名/` 下
-4. **共享组件**：放在 `core/widgets/`，使用 `GlassContainer` 风格
-5. **颜色**：使用 `AppColors` 或 `Theme.of(context)`，不要硬编码 RGB
-6. **排版**：使用 `AppTypography.xxx.copyWith(color: ...)`，禁止硬编码 fontSize
-7. **间距**：使用 `AppSpacing.xxx`，禁止硬编码 padding/margin 数字
-8. **圆角**：使用 `AppRadius.borderXxx`，禁止硬编码 BorderRadius
-9. **动效**：使用 `AppMotion.xxx`，禁止硬编码 Duration
-10. **阴影**：使用 `AppElevation.xxx(isDark)`
+1. **跨平台优先**：每个功能必须同时在 Windows / macOS / Linux 上可用，不允许单平台实现
+2. **状态管理**：使用 Riverpod 3.x `Notifier` 模式，禁止 `StateNotifier`
+3. **路由**：使用 GoRouter 声明式配置，新页面加入 ShellRoute
+4. **页面位置**：所有业务页面放在 `features/功能名/` 下
+5. **共享组件**：放在 `core/widgets/`，使用 `GlassContainer` 风格
+6. **颜色**：使用 `AppColors` 或 `Theme.of(context)`，不要硬编码 RGB
+7. **排版**：使用 `AppTypography.xxx.copyWith(color: ...)`，禁止硬编码 fontSize
+8. **间距**：使用 `AppSpacing.xxx`，禁止硬编码 padding/margin 数字
+9. **圆角**：使用 `AppRadius.borderXxx`，禁止硬编码 BorderRadius
+10. **动效**：使用 `AppMotion.xxx`，禁止硬编码 Duration
+11. **阴影**：使用 `AppElevation.xxx(isDark)`
 11. **交互区域**：使用 `AppTouch.xxx`，禁止硬编码尺寸
 12. **文本**：使用 ARB 国际化 `AppLocalizations.of(context)!.xxx`，不要硬编码中文
 13. **平台检测**：使用 `ref.watch(isMacProvider)` 或 `ref.watch(platformProvider)`

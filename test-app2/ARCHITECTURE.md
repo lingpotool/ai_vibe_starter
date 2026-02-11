@@ -2,12 +2,91 @@
 
 > 本文档描述了整个项目的设计思想、技术栈、目录结构和开发约定。
 > AI 助手加载此文档后，即可理解项目全貌并开始开发具体功能。
+> **核心原则：本项目是 Windows / macOS / Linux 三平台桌面应用，所有功能必须同时在三个平台上正常运行。**
 
 ## 一、项目定位
 
-这是一个 **Electron + Vue 3 桌面应用模板**，设计目标是提供 macOS 级别的视觉质感（毛玻璃/高斯模糊/玻璃态），同时在 Windows 和 Linux 上也能优雅运行。
+这是一个 **Electron + Vue 3 桌面应用模板**，设计目标是提供 macOS 级别的视觉质感（毛玻璃/高斯模糊/玻璃态），同时在 **Windows / macOS / Linux** 上都能优雅运行。
 
 UI 风格参考了 shadcn/ui 的设计语言 — 不使用任何重型 UI 组件库（如 Element Plus、Ant Design），而是用 Tailwind CSS 原子类 + radix-vue 无样式原语 + 手写组件的方式，实现完全可控的精致界面。
+
+**跨平台是本项目的第一优先级。** 任何功能、任何代码变更都必须确保 Windows / macOS / Linux 三平台可用。
+不存在"先做一个平台再适配另一个"的情况 — 每次提交都必须是三平台完整可用的。
+
+## 一.五、跨平台开发规范（最重要）
+
+### 核心原则
+
+每开发一个功能，必须按以下清单逐项检查：
+
+| 检查项 | 说明 |
+|--------|------|
+| **窗口标题栏** | macOS 用 `hiddenInset` + 红绿灯，Windows 用 `titleBarOverlay` 系统按钮，Linux 同 Windows |
+| **系统托盘** | 三平台 API 一致（Electron Tray），但图标格式不同（Windows .ico，macOS 模板图标，Linux .png） |
+| **文件路径** | 使用 `app.getPath()` 系列 API，不要硬编码路径分隔符 |
+| **快捷键** | macOS 用 `CommandOrControl`（映射 Cmd），Windows/Linux 映射 Ctrl |
+| **字体渲染** | 三平台渲染引擎不同，macOS 最精细，Windows ClearType，Linux 随配置 |
+| **窗口材质** | macOS `vibrancy: 'sidebar'`，Windows `backgroundMaterial: 'mica'`，Linux 无系统级模糊 |
+| **原生模块** | 引入 Node.js 原生模块前确认三平台预编译二进制可用 |
+| **系统通知** | Electron `Notification` 三平台行为不同（macOS 通知中心、Windows 操作中心、Linux 桌面通知） |
+| **文件对话框** | `dialog.showOpenDialog` 过滤器格式三平台一致，但默认路径不同 |
+| **深色模式** | `nativeTheme.shouldUseDarkColors` 统一检测，但 titleBarOverlay 颜色需动态更新 |
+
+### 平台差异处理模式
+
+```typescript
+// ✅ 正确：使用 appStore 中的平台检测
+const { isMac, isWindows, isLinux } = usePlatform()
+
+if (isMac) {
+  // macOS 特有逻辑（如红绿灯区域预留）
+} else {
+  // Windows / Linux 逻辑（如自定义窗口按钮区域）
+}
+
+// 主进程中
+import { platform } from 'node:process'
+if (platform === 'darwin') { /* macOS */ }
+if (platform === 'win32')  { /* Windows */ }
+if (platform === 'linux')  { /* Linux */ }
+
+// ❌ 禁止：只考虑一个平台
+// 禁止写 Windows-only 的代码而不处理 macOS 和 Linux
+```
+
+### 常见跨平台陷阱
+
+| 陷阱 | Windows | macOS | Linux | 解决方案 |
+|------|---------|-------|-------|----------|
+| 标题栏 | `titleBarOverlay` 系统按钮 | `hiddenInset` + 红绿灯 | 同 Windows | `window.service.ts` 已处理 |
+| 窗口模糊 | `backgroundMaterial: 'mica'` | `vibrancy: 'sidebar'` | 不支持 | CSS `.glass` 类兜底 |
+| 托盘图标 | `.ico` 格式 | 模板图标（16x16 @2x） | `.png` 格式 | `tray.service.ts` 按平台选择 |
+| 文件路径 | `\` 分隔符 | `/` 分隔符 | `/` 分隔符 | 使用 `path.join()` |
+| 系统字体 | 微软雅黑 | 苹方 | 随桌面环境 | CSS `font-family` fallback 链 |
+| 应用签名 | 代码签名证书 | Apple Developer ID | 无需签名 | `electron-builder` 配置 |
+| 自动更新 | NSIS 安装包 | DMG / zip | AppImage | `electron-updater` |
+| 高 DPI | 缩放比例不同 | Retina 2x | 随设置 | CSS `rem` + Tailwind 自动处理 |
+
+### 插件/原生模块选择规范
+
+引入新的 npm 包时，如果包含原生模块（N-API / node-gyp），必须检查：
+
+1. **平台支持**：确认 Windows ✅ + macOS ✅ + Linux ✅ 预编译二进制可用
+2. **Electron 版本兼容**：确认支持当前 Electron 版本的 Node.js ABI
+3. **构建依赖**：是否需要 Visual Studio Build Tools（Windows）/ Xcode（macOS）/ build-essential（Linux）？
+4. **打包兼容**：`electron-builder` 能否正确打包该原生模块？
+
+### 平台特定配置
+
+| 配置 | 位置 | 何时需要修改 |
+|------|------|-------------|
+| Windows 安装包 | `electron-builder.yml` → `nsis` | 安装选项、注册表、文件关联 |
+| macOS 签名 | `electron-builder.yml` → `mac` | 签名证书、公证、entitlements |
+| Linux 打包 | `electron-builder.yml` → `linux` | 桌面文件、图标、分类 |
+| 窗口创建 | `window.service.ts` | 标题栏样式、窗口材质、最小尺寸 |
+| 托盘 | `tray.service.ts` | 图标路径、菜单项 |
+
+**规则：修改任何平台相关配置时，必须同时检查其他两个平台是否需要对应修改。**
 
 ## 二、技术栈
 
@@ -375,11 +454,13 @@ pnpm dev
 
 ## 十二、开发约定
 
-1. **组件风格**：全部使用 `<script setup lang="ts">` + Composition API
-2. **样式方式**：Tailwind 原子类为主，复杂效果用 CSS 工具类（`.glass`、`.glass-card`）
-3. **IPC 安全**：渲染进程不直接访问 Node API，全部通过 `window.api` 桥接
-4. **平台检测**：使用 `appStore.isMac` / `appStore.platform`，不要用 `navigator.userAgent`
-5. **主题切换**：通过 `appStore.toggleTheme()`，会自动同步 DOM class + titleBarOverlay
-6. **新增功能模块**：遵循 `modules/模块名/index.ts + 模块名.service.ts` 的结构
-7. **UI 组件**：放在 `components/ui/` 下，使用 `cn()` 合并 class，支持 `class` prop 透传
-8. **不使用 UI 组件库**：所有 UI 手写或基于 radix-vue 原语构建
+1. **跨平台优先**：每个功能必须同时在 Windows / macOS / Linux 上可用，不允许单平台实现
+2. **组件风格**：全部使用 `<script setup lang="ts">` + Composition API
+3. **样式方式**：Tailwind 原子类为主，复杂效果用 CSS 工具类（`.glass`、`.glass-card`）
+4. **IPC 安全**：渲染进程不直接访问 Node API，全部通过 `window.api` 桥接
+5. **平台检测**：使用 `appStore.isMac` / `appStore.platform`，不要用 `navigator.userAgent`
+6. **主题切换**：通过 `appStore.toggleTheme()`，会自动同步 DOM class + titleBarOverlay
+7. **新增功能模块**：遵循 `modules/模块名/index.ts + 模块名.service.ts` 的结构
+8. **UI 组件**：放在 `components/ui/` 下，使用 `cn()` 合并 class，支持 `class` prop 透传
+9. **不使用 UI 组件库**：所有 UI 手写或基于 radix-vue 原语构建
+10. **平台配置同步**：修改任何平台相关配置时，必须同时检查其他两个平台是否需要对应修改
