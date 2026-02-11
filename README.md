@@ -92,6 +92,11 @@ pnpm dev
 
 `test-app2/` — Electron + Vue 3 + Tailwind CSS v4
 
+<p align="center">
+  <img src="docs/screenshots/Electron1.png" width="45%" alt="Electron 桌面端截图1" />
+  <img src="docs/screenshots/Electron2.png" width="45%" alt="Electron 桌面端截图2" />
+</p>
+
 - 三平台：Windows / macOS / Linux
 - NavRail 56px 侧边栏 + 玻璃态
 - 系统级窗口模糊（macOS vibrancy / Windows Mica）
@@ -112,6 +117,11 @@ pnpm dev
 
 `test_app3/` — Flutter + Riverpod 3.x + GoRouter
 
+<p align="center">
+  <img src="docs/screenshots/Flutter.png" width="45%" alt="Flutter 桌面端截图1" />
+  <img src="docs/screenshots/Flutter2.png" width="45%" alt="Flutter 桌面端截图2" />
+</p>
+
 - 三平台：Windows / macOS / Linux
 - NavRail 56px 侧边栏 + 玻璃态
 - 自定义标题栏 + 窗口控制按钮
@@ -129,6 +139,11 @@ flutter run -d windows   # 或 macos / linux
 ### Flutter 移动端
 
 `mobile_app/` — Flutter + Riverpod 3.x + GoRouter
+
+<p align="center">
+  <img src="docs/screenshots/mobile_app.png" width="30%" alt="移动端截图1" />
+  <img src="docs/screenshots/mobile_app_2.png" width="30%" alt="移动端截图2" />
+</p>
 
 - 双平台：Android / iOS
 - 底部导航 + 毛玻璃
