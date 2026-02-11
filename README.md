@@ -1,7 +1,11 @@
 # AI Vibe Starter — AI 驱动的项目模板集合
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 一套经过精心设计的跨平台应用模板，拥有完整的设计令牌系统、毛玻璃视觉风格和企业级基础设施。
 拉取即用，配合任何 AI 编码工具（Kiro、Cursor、Copilot、Claude 等）直接开发业务功能。
+
+> ⚠️ 本项目全部代码均由 AI 生成（Kiro / Claude），未经人工逐行审查。可能存在疏漏、不完善或潜在问题，使用前请自行验证关键逻辑。欢迎提 Issue 反馈。
 
 ## 可用模板
 
@@ -175,3 +179,7 @@ ai_vibe_starter/
 - **跨平台优先** — 每个模板都强制要求多平台一致性
 - **设计令牌驱动** — 所有视觉参数从令牌引用，禁止硬编码
 - **毛玻璃统一风格** — 所有模板共享 macOS 级别的玻璃态视觉语言
+
+## License
+
+[MIT](LICENSE) © lingpotool
