@@ -23,7 +23,7 @@ Flutter 移动应用企业级模板（iOS / Android），提供与桌面端一�
 | shared_preferences | 轻量持久化 |
 | path_provider | 应用数据目录 |
 | url_launcher | 打开 URL |
-| google_fonts | Inter 字体 |
+| google_fonts | Noto Sans SC / Inter / JetBrains Mono |
 | lucide_icons | 图标库 |
 | intl | 国际化 |
 
@@ -43,11 +43,45 @@ Flutter 移动应用企业级模板（iOS / Android），提供与桌面端一�
 
 **共享部分：** AppColors、AppTheme、GlassContainer、MeshGradientBackground、
 Toast、ConfirmDialog、EmptyState、LoadingOverlay、EventBus、StorageService、
-Logger、ErrorHandler、AppConfig、i18n (ARB)、Riverpod Provider 模式。
+Logger、ErrorHandler、AppConfig、i18n (ARB)、Riverpod Provider 模式、设计令牌系统。
 
 ---
 
-## 四、目录结构
+## 四、设计令牌系统
+
+所有视觉参数必须从设计令牌中引用，禁止硬编码数字。
+
+| 文件 | 职责 | 关键内容 |
+|------|------|----------|
+| `app_colors.dart` | 色彩系统 | 亮/暗双主题，前景/背景/主色/边框/卡片等 |
+| `app_typography.dart` | 排版系统 | Noto Sans SC（全局）+ Inter（标题）+ JetBrains Mono（代码），7级字号阶梯 28/20/16/14/13/12/11 |
+| `app_spacing.dart` | 间距系统 | 4dp 网格，9级阶梯 xxs(2)~huge(48)，含页面/卡片/列表预设 |
+| `app_radius.dart` | 圆角系统 | 6级 xs(4)/sm(8)/md(12)/lg(16)/xl(24)/full(999)，含 BorderRadius 预设 |
+| `app_motion.dart` | 动效系统 | 4级时长 instant(100ms)~slow(500ms)，4种曲线 |
+| `app_elevation.dart` | 阴影系统 | 3级 low/medium/high，适配亮暗主题 |
+| `app_touch.dart` | 触控规范 | 最小目标 48dp，底部导航 56dp，设置项 56dp |
+| `app_theme.dart` | 主题整合 | ThemeData 构建，全局字体 Noto Sans SC |
+
+### 使用示例
+
+```dart
+// ✅ 正确
+padding: AppSpacing.pagePadding,
+borderRadius: AppRadius.borderMd,
+style: AppTypography.pageTitle.copyWith(color: fg),
+duration: AppMotion.fast,
+boxShadow: AppElevation.low(isDark),
+
+// ❌ 禁止
+padding: EdgeInsets.all(20),
+borderRadius: BorderRadius.circular(12),
+fontSize: 28,
+duration: Duration(milliseconds: 200),
+```
+
+---
+
+## 五、目录结构
 
 ```
 lib/
@@ -73,8 +107,14 @@ lib/
 │   ├── layout/
 │   │   └── app_shell.dart (底部导航 + 毛玻璃)
 │   ├── theme/
-│   │   ├── app_theme.dart
-│   │   └── app_colors.dart
+│   │   ├── app_theme.dart      — 主题整合
+│   │   ├── app_colors.dart     — 色彩
+│   │   ├── app_typography.dart — 排版
+│   │   ├── app_spacing.dart    — 间距
+│   │   ├── app_radius.dart     — 圆角
+│   │   ├── app_motion.dart     — 动效
+│   │   ├── app_elevation.dart  — 阴影
+│   │   └── app_touch.dart      — 触控
 │   ├── widgets/
 │   │   ├── glass.dart
 │   │   ├── mesh_gradient_bg.dart
@@ -94,20 +134,26 @@ lib/
 
 ---
 
-## 五、开发规范（与桌面端一致）
+## 六、开发规范（与桌面端一致）
 
 1. 状态管理：Riverpod 3.x `Notifier` 模式，禁止 `StateNotifier`
 2. 路由：GoRouter 声明式配置，新页面加入 ShellRoute
 3. 页面位置：`features/功能名/` 下
 4. 共享组件：`core/widgets/`，使用 `GlassContainer` 风格
 5. 颜色：使用 `AppColors` 或 `Theme.of(context)`
-6. 文本：ARB 国际化 `AppLocalizations.of(context)!.xxx`
-7. 日志：`AppLogger.info/warn/error`
-8. 配置：`AppConfig` 常量
+6. 排版：使用 `AppTypography.xxx.copyWith(color: ...)`，禁止硬编码 fontSize
+7. 间距：使用 `AppSpacing.xxx`，禁止硬编码 padding/margin 数字
+8. 圆角：使用 `AppRadius.borderXxx`，禁止硬编码 BorderRadius
+9. 动效：使用 `AppMotion.xxx`，禁止硬编码 Duration
+10. 阴影：使用 `AppElevation.xxx(isDark)`
+11. 触控：交互元素最小 `AppTouch.minTarget` (48dp)
+12. 文本：ARB 国际化 `AppLocalizations.of(context)!.xxx`
+13. 日志：`AppLogger.info/warn/error`
+14. 配置：`AppConfig` 常量
 
 ---
 
-## 六、添加新页面
+## 七、添加新页面
 
 1. 创建 `lib/features/xxx/xxx_page.dart`
 2. 在 `app_router.dart` ShellRoute.routes 中添加 GoRoute
@@ -116,7 +162,7 @@ lib/
 
 ---
 
-## 七、开发命令
+## 八、开发命令
 
 ```bash
 flutter run                  # 运行

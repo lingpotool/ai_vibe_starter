@@ -28,14 +28,51 @@ Flutter 桌面应用企业级模板，提供 macOS 级别的视觉质感（毛�
 | path_provider | 2.1.x | 应用数据目录 |
 | url_launcher | 6.3.x | 打开 URL |
 | local_notifier | 0.1.x | 桌面系统通知 |
-| google_fonts | 8.x | Inter 字体 |
+| google_fonts | 8.x | Noto Sans SC / Inter / JetBrains Mono |
 | lucide_icons | 0.257.x | 图标库 |
 | intl | 0.20.x | 国际化 |
 | glados | dev | 属性测试（Property-Based Testing） |
 
 ---
 
-## 三、目录结构
+## 三、设计令牌系统
+
+所有视觉参数必须从设计令牌中引用，禁止硬编码数字。
+桌面端令牌值与移动端有差异（字号更小、间距更紧凑、交互区域适配鼠标）。
+
+| 文件 | 职责 | 关键内容 |
+|------|------|----------|
+| `app_colors.dart` | 色彩系统 | 亮/暗双主题，前景/背景/主色/边框/卡片/侧边栏等 |
+| `app_typography.dart` | 排版系统 | Noto Sans SC（全局）+ Inter（标题）+ JetBrains Mono（代码），桌面端7级字号 22/18/14/13/12/11/10 |
+| `app_spacing.dart` | 间距系统 | 4dp 网格，9级阶梯 xxs(2)~huge(48)，桌面端页面 padding 更紧凑 |
+| `app_radius.dart` | 圆角系统 | 6级 xs(4)/sm(8)/md(12)/lg(16)/xl(24)/full(999)，含 BorderRadius 预设 |
+| `app_motion.dart` | 动效系统 | 4级时长 instant(100ms)~slow(500ms)，4种曲线 |
+| `app_elevation.dart` | 阴影系统 | 3级 low/medium/high，适配亮暗主题 |
+| `app_touch.dart` | 交互规范 | 桌面端最小目标 36dp，NavRail 56px，标题栏 38/44px |
+| `app_theme.dart` | 主题整合 | ThemeData 构建，全局字体 Noto Sans SC |
+
+### 使用示例
+
+```dart
+// ✅ 正确
+padding: AppSpacing.pagePadding,
+borderRadius: AppRadius.borderMd,
+style: AppTypography.pageTitle.copyWith(color: fg),
+duration: AppMotion.fast,
+boxShadow: AppElevation.low(isDark),
+width: AppTouch.navRailWidth,
+
+// ❌ 禁止
+padding: EdgeInsets.all(20),
+borderRadius: BorderRadius.circular(12),
+fontSize: 22,
+duration: Duration(milliseconds: 200),
+width: 56,
+```
+
+---
+
+## 四、目录结构
 
 ```
 lib/
@@ -66,8 +103,14 @@ lib/
 │   │   ├── app_shell.dart                 # 主布局壳（渐变背景 + NavRail + 标题栏 + 内容区）
 │   │   └── nav_rail.dart                  # 56px 窄侧边栏（玻璃态 + 图标导航 + 主题切换）
 │   ├── theme/
-│   │   ├── app_theme.dart                 # ThemeData（亮/暗）
-│   │   └── app_colors.dart                # 色彩系统（亮/暗双套）
+│   │   ├── app_theme.dart      — 主题整合
+│   │   ├── app_colors.dart     — 色彩
+│   │   ├── app_typography.dart — 排版（桌面端字号）
+│   │   ├── app_spacing.dart    — 间距（桌面端紧凑）
+│   │   ├── app_radius.dart     — 圆角
+│   │   ├── app_motion.dart     — 动效
+│   │   ├── app_elevation.dart  — 阴影
+│   │   └── app_touch.dart      — 交互区域（桌面端）
 │   ├── widgets/                           # 通用 UI 组件库
 │   │   ├── glass.dart                     # GlassContainer / GlassCard（核心玻璃态组件）
 │   │   ├── mesh_gradient_bg.dart          # 多层径向渐变背景
@@ -93,7 +136,7 @@ lib/
 
 ---
 
-## 四、启动流程
+## 五、启动流程
 
 `main.dart` 的初始化顺序（严格按此顺序）：
 
@@ -112,7 +155,7 @@ lib/
 
 ---
 
-## 五、核心设计模式
+## 六、核心设计模式
 
 ### 5.1 玻璃态（Glassmorphism）
 
@@ -280,7 +323,7 @@ context.screenSize     // Size
 
 ---
 
-## 六、添加新功能页面（完整步骤）
+## 七、添加新功能页面（完整步骤）
 
 以添加「用户管理」页面为例：
 
@@ -391,7 +434,7 @@ const _navItems = [
 
 ---
 
-## 七、已知陷阱与注意事项
+## 八、已知陷阱与注意事项
 
 ### 7.1 Text 黄色下划线问题
 
@@ -440,7 +483,7 @@ AppConfig.supportedLocales  // [Locale('zh'), Locale('en')]
 
 ---
 
-## 八、开发命令
+## 九、开发命令
 
 ```bash
 # Flutter 版本管理
@@ -468,25 +511,31 @@ fvm flutter build linux
 
 ---
 
-## 九、开发规范（必须遵守）
+## 十、开发规范（必须遵守）
 
 1. **状态管理**：使用 Riverpod 3.x `Notifier` 模式，禁止 `StateNotifier`
 2. **路由**：使用 GoRouter 声明式配置，新页面加入 ShellRoute
 3. **页面位置**：所有业务页面放在 `features/功能名/` 下
 4. **共享组件**：放在 `core/widgets/`，使用 `GlassContainer` 风格
 5. **颜色**：使用 `AppColors` 或 `Theme.of(context)`，不要硬编码 RGB
-6. **文本**：使用 ARB 国际化 `AppLocalizations.of(context)!.xxx`，不要硬编码中文
-7. **平台检测**：使用 `ref.watch(isMacProvider)` 或 `ref.watch(platformProvider)`
-8. **日志**：使用 `AppLogger.info/warn/error`，不要用 `print()`
-9. **配置**：使用 `AppConfig` 常量，不要硬编码应用名称/版本
-10. **服务注册**：新服务的 Provider 放在 `service_providers.dart`
-11. **Overlay 中的 Text**：必须用 `DefaultTextStyle` 或 `Material` 包裹
-12. **页面布局**：使用 `ListView` + `ConstrainedBox(maxWidth: 720)` + `Center` 的标准模式
-13. **测试**：核心逻辑写属性测试（glados），UI 写 Widget 测试
+6. **排版**：使用 `AppTypography.xxx.copyWith(color: ...)`，禁止硬编码 fontSize
+7. **间距**：使用 `AppSpacing.xxx`，禁止硬编码 padding/margin 数字
+8. **圆角**：使用 `AppRadius.borderXxx`，禁止硬编码 BorderRadius
+9. **动效**：使用 `AppMotion.xxx`，禁止硬编码 Duration
+10. **阴影**：使用 `AppElevation.xxx(isDark)`
+11. **交互区域**：使用 `AppTouch.xxx`，禁止硬编码尺寸
+12. **文本**：使用 ARB 国际化 `AppLocalizations.of(context)!.xxx`，不要硬编码中文
+13. **平台检测**：使用 `ref.watch(isMacProvider)` 或 `ref.watch(platformProvider)`
+14. **日志**：使用 `AppLogger.info/warn/error`，不要用 `print()`
+15. **配置**：使用 `AppConfig` 常量，不要硬编码应用名称/版本
+16. **服务注册**：新服务的 Provider 放在 `service_providers.dart`
+17. **Overlay 中的 Text**：必须用 `DefaultTextStyle` 或 `Material` 包裹
+18. **页面布局**：使用 `ListView` + `ConstrainedBox(maxWidth: 720)` + `Center` 的标准模式
+19. **测试**：核心逻辑写属性测试（glados），UI 写 Widget 测试
 
 ---
 
-## 十、测试架构
+## 十一、测试架构
 
 ```
 test/

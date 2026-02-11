@@ -1,5 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
+import 'package:mobile_app/core/theme/app_radius.dart';
+import 'package:mobile_app/core/theme/app_spacing.dart';
+import 'package:mobile_app/core/theme/app_elevation.dart';
 
 /// 毛玻璃容器 — 核心视觉组件
 class GlassContainer extends StatelessWidget {
@@ -26,7 +29,7 @@ class GlassContainer extends StatelessWidget {
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final effectiveOpacity = opacity ?? (isDark ? 0.06 : 0.72);
-    final effectiveBorderRadius = borderRadius ?? BorderRadius.circular(16);
+    final effectiveBorderRadius = borderRadius ?? AppRadius.borderLg;
 
     return Container(
       margin: margin,
@@ -44,18 +47,7 @@ class GlassContainer extends StatelessWidget {
                         ? Colors.white.withValues(alpha: 0.05)
                         : Colors.black.withValues(alpha: 0.04),
                   ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: isDark ? 0.15 : 0.03),
-                  blurRadius: 16,
-                  offset: const Offset(0, 4),
-                ),
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: isDark ? 0.08 : 0.04),
-                  blurRadius: 2,
-                  offset: const Offset(0, 1),
-                ),
-              ],
+              boxShadow: AppElevation.low(isDark),
             ),
             padding: padding,
             child: child,
@@ -67,13 +59,13 @@ class GlassContainer extends StatelessWidget {
 }
 
 class GlassCard extends StatelessWidget {
-  const GlassCard({super.key, required this.child, this.padding = const EdgeInsets.all(20), this.margin});
+  const GlassCard({super.key, required this.child, this.padding = AppSpacing.cardPadding, this.margin});
   final Widget child;
   final EdgeInsets padding;
   final EdgeInsets? margin;
 
   @override
   Widget build(BuildContext context) {
-    return GlassContainer(padding: padding, margin: margin, borderRadius: BorderRadius.circular(12), child: child);
+    return GlassContainer(padding: padding, margin: margin, borderRadius: AppRadius.borderMd, child: child);
   }
 }
