@@ -64,7 +64,31 @@ cp -r ai_vibe_starter/test_app3  my_desktop_app
 
 ### 3. 修改项目名称和包名
 
-根据模板类型修改对应的配置文件（`pubspec.yaml` / `package.json`、Android/iOS 配置等）。
+这一步涉及多个配置文件，建议直接让 AI 帮你完成。复制以下提示词发给你的 AI 工具：
+
+**Flutter 模板（mobile_app / test_app3）：**
+```
+帮我把这个 Flutter 项目重命名：
+- 项目名改为：[你的项目名，如 my_app]
+- 包名改为：[你的包名，如 com.example.myapp]
+- 应用显示名改为：[你的应用名，如 我的应用]
+
+需要修改的地方包括：pubspec.yaml 的 name 和 description、
+Android 的 applicationId 和 AndroidManifest.xml 的 label、
+iOS 的 bundleIdentifier 和 Info.plist 的 CFBundleDisplayName、
+以及所有 Kotlin/Swift 文件中的包路径。
+```
+
+**Electron Vue3 模板（test-app2）：**
+```
+帮我把这个 Electron Vue3 项目重命名：
+- 项目名改为：[你的项目名，如 my-desktop-app]
+- 应用显示名改为：[你的应用名，如 我的桌面应用]
+
+需要修改的地方包括：package.json 的 name/productName/description、
+electron-builder 配置中的 appId 和 productName、
+index.html 的 title、以及窗口标题。
+```
 
 ### 4. 安装依赖并运行
 
