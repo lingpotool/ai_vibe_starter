@@ -11,8 +11,6 @@
 | [`test_app3`](#flutter-桌面端) | Flutter + Riverpod + GoRouter | Windows / macOS / Linux | 桌面应用，NavRail + 玻璃态 + 系统托盘 |
 | [`mobile_app`](#flutter-移动端) | Flutter + Riverpod + GoRouter | Android / iOS | 移动应用，底部导航 + 玻璃态 |
 
-> `creatorino/` 是基于 mobile_app 模板创建的独立项目实例，可作为参考。
-
 ## 每个模板都包含什么
 
 所有模板共享统一的设计语言和基础设施：
@@ -152,8 +150,7 @@ flutter run
 ai_vibe_starter/
 ├── test-app2/          # Electron Vue3 桌面端模板
 ├── test_app3/          # Flutter 桌面端模板
-├── mobile_app/         # Flutter 移动端模板
-└── creatorino/         # 独立项目实例（基于 mobile_app，不含在仓库中）
+└── mobile_app/         # Flutter 移动端模板
 ```
 
 ## 设计理念
