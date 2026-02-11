@@ -153,16 +153,8 @@ ai_vibe_starter/
 ├── test-app2/          # Electron Vue3 桌面端模板
 ├── test_app3/          # Flutter 桌面端模板
 ├── mobile_app/         # Flutter 移动端模板
-├── creatorino/         # 独立项目实例（基于 mobile_app）
-├── presets/            # [暂停] 提示词驱动的项目预设
-├── topics/             # [暂停] 技术选型知识库
-├── examples/           # [暂停] 项目规则示例
-├── templates/          # [暂停] 规则模板
-└── BOOTSTRAP.md        # [暂停] 提示词启动协议
+└── creatorino/         # 独立项目实例（基于 mobile_app，不含在仓库中）
 ```
-
-> 标记 `[暂停]` 的是早期的提示词驱动方案（通过 AI 对话生成项目规则）。
-> 当前推荐直接使用上面的模板，拉取即用。
 
 ## 设计理念
 
