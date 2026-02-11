@@ -2,14 +2,88 @@
 
 > 本文档是 AI 助手的上下文加载文件。
 > 与桌面端 (test_app3) 共享相同的设计语言、色彩系统、玻璃态组件。
+> **核心原则：本项目是 Android + iOS 双平台应用，所有功能必须同时在两个平台上正常运行。**
 
 ---
 
 ## 一、项目定位
 
-Flutter 移动应用企业级模板（iOS / Android），提供与桌面端一致的毛玻璃视觉风格。
+Flutter 移动应用企业级模板（**iOS / Android**），提供与桌面端一致的毛玻璃视觉风格。
 核心基础设施已就绪：日志、错误处理、事件总线、键值存储、路由、UI 组件库。
 开发者只需在 `features/` 下添加业务功能。
+
+**跨平台是本项目的第一优先级。** 任何功能、任何代码变更都必须确保 Android 和 iOS 双平台可用。
+不存在"先做一个平台再适配另一个"的情况 — 每次提交都必须是双平台完整可用的。
+
+---
+
+## 一.五、跨平台开发规范（最重要）
+
+### 核心原则
+
+每开发一个功能，必须按以下清单逐项检查：
+
+| 检查项 | 说明 |
+|--------|------|
+| **UI 适配** | SafeArea、刘海屏、圆角屏、折叠屏、不同屏幕尺寸 |
+| **交互差异** | iOS 滑动返回（Cupertino 手势）、Android 系统返回键 |
+| **系统 API** | 相机、相册、文件、通知、权限等必须双平台测试 |
+| **原生插件** | 引入任何插件前检查其 platform support（pubspec 中 android + ios 都有） |
+| **字体渲染** | Android 和 iOS 的字体渲染引擎不同，需实机确认视觉效果 |
+| **状态栏/导航栏** | Android 有系统导航栏（底部），iOS 有 Home Indicator |
+| **键盘行为** | Android 键盘弹出时 resize，iOS 键盘覆盖 — 需要 `MediaQuery.viewInsets` |
+| **权限模型** | Android 运行时权限 vs iOS Info.plist 声明，流程不同 |
+| **文件路径** | 使用 `path_provider`，不要硬编码路径分隔符 |
+| **深色模式** | 两个平台的系统深色模式切换行为不同，需测试 |
+
+### 平台差异处理模式
+
+```dart
+// ✅ 正确：使用 Flutter 内置的平台判断
+import 'dart:io' show Platform;
+
+if (Platform.isIOS) {
+  // iOS 特有逻辑
+} else if (Platform.isAndroid) {
+  // Android 特有逻辑
+}
+
+// ❌ 禁止：只考虑一个平台
+// 禁止写 Android-only 或 iOS-only 的代码而不处理另一个平台
+```
+
+### 常见跨平台陷阱
+
+| 陷阱 | Android 表现 | iOS 表现 | 解决方案 |
+|------|-------------|----------|----------|
+| 状态栏颜色 | 可通过 SystemUiOverlayStyle 控制 | 只能控制图标亮暗 | AppTheme 已统一处理 |
+| 返回手势 | 系统返回键 + 手势 | 屏幕左边缘滑动 | GoRouter 自动处理 |
+| 键盘弹出 | 默认 resize 布局 | 默认覆盖 | 使用 `resizeToAvoidBottomInset` + `MediaQuery.viewInsets` |
+| 图片选择 | 不需要特殊权限（Android 13+） | 需要 Photo Library Usage Description | 使用 `image_picker` 统一处理 |
+| 文件存储 | `getExternalStorageDirectory()` | `getApplicationDocumentsDirectory()` | 统一使用 `getApplicationDocumentsDirectory()` |
+| HTTP 明文 | 默认禁止（需 network_security_config） | 默认禁止（ATS） | 只使用 HTTPS |
+| 字体粗细 | 部分字重可能 fallback | 字重渲染更精确 | 使用 Google Fonts 确保一致 |
+| 触觉反馈 | `HapticFeedback` 效果较弱 | Taptic Engine 效果丰富 | 统一使用 `HapticFeedback.lightImpact()` |
+
+### 插件选择规范
+
+引入新的 Flutter 插件时，必须检查：
+
+1. **平台支持**：`pub.dev` 页面确认 Android ✅ + iOS ✅
+2. **维护状态**：最近 6 个月内有更新
+3. **权限声明**：Android `AndroidManifest.xml` + iOS `Info.plist` 都要配
+4. **最低版本**：是否要求提高 `minSdkVersion`（Android）或 iOS deployment target？
+
+### 平台特定配置文件
+
+| 文件 | 平台 | 何时需要修改 |
+|------|------|-------------|
+| `android/app/build.gradle.kts` | Android | 修改 minSdk、targetSdk、添加依赖 |
+| `android/app/src/main/AndroidManifest.xml` | Android | 添加权限、Activity 配置、Deep Link |
+| `ios/Runner/Info.plist` | iOS | 添加权限描述、URL Scheme、ATS 配置 |
+| `ios/Podfile` | iOS | 修改最低 iOS 版本、添加 Pod 配置 |
+
+**规则：修改任何平台配置文件时，必须同时检查另一个平台是否需要对应修改。**
 
 ---
 
@@ -136,7 +210,8 @@ lib/
 
 ## 六、开发规范（与桌面端一致）
 
-1. 状态管理：Riverpod 3.x `Notifier` 模式，禁止 `StateNotifier`
+1. 跨平台优先：每个功能必须同时在 Android 和 iOS 上可用，不允许单平台实现
+2. 状态管理：Riverpod 3.x `Notifier` 模式，禁止 `StateNotifier`
 2. 路由：GoRouter 声明式配置，新页面加入 ShellRoute
 3. 页面位置：`features/功能名/` 下
 4. 共享组件：`core/widgets/`，使用 `GlassContainer` 风格
@@ -165,10 +240,14 @@ lib/
 ## 八、开发命令
 
 ```bash
-flutter run                  # 运行
+flutter run                  # 运行（自动选择已连接设备）
 flutter test                 # 测试
 flutter gen-l10n             # 重新生成国际化
 dart analyze lib             # 代码分析
-flutter build apk            # 构建 Android
-flutter build ios            # 构建 iOS
+
+# 双平台构建验证（每次提交前都应执行）
+flutter build apk --debug    # Android Debug
+flutter build apk            # Android Release
+flutter build ios --debug --no-codesign  # iOS Debug（需 macOS）
+flutter build ios            # iOS Release（需 macOS）
 ```

@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./theme.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -130,9 +131,9 @@
                  'PingFang SC', 'Microsoft YaHei UI', 'Microsoft YaHei', sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    font-size: 14px;
-    line-height: 1.5;
-    letter-spacing: -0.006em;
+    font-size: var(--text-card-title);
+    line-height: var(--leading-normal);
+    letter-spacing: var(--tracking-normal);
   }
   #app {
     height: 100%;
@@ -158,26 +159,20 @@
 
 /* ===== Glass utilities ===== */
 .glass {
-  backdrop-filter: blur(40px) saturate(180%);
-  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate));
 }
 .glass-subtle {
-  backdrop-filter: blur(20px) saturate(150%);
-  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  backdrop-filter: blur(var(--glass-blur-subtle)) saturate(var(--glass-saturate-subtle));
+  -webkit-backdrop-filter: blur(var(--glass-blur-subtle)) saturate(var(--glass-saturate-subtle));
 }
 .glass-card {
-  backdrop-filter: blur(24px) saturate(160%);
-  -webkit-backdrop-filter: blur(24px) saturate(160%);
-  box-shadow:
-    0 0 0 1px oklch(0 0 0 / 4%),
-    0 1px 2px oklch(0 0 0 / 4%),
-    0 4px 16px oklch(0 0 0 / 3%);
+  backdrop-filter: blur(var(--glass-blur-card)) saturate(var(--glass-saturate-card));
+  -webkit-backdrop-filter: blur(var(--glass-blur-card)) saturate(var(--glass-saturate-card));
+  box-shadow: var(--shadow-low);
 }
 .dark .glass-card {
-  box-shadow:
-    0 0 0 1px oklch(1 0 0 / 5%),
-    0 1px 2px oklch(0 0 0 / 20%),
-    0 4px 16px oklch(0 0 0 / 15%);
+  box-shadow: var(--shadow-low);
 }
 
 /* Titlebar drag */
@@ -185,15 +180,15 @@
 .titlebar-no-drag { -webkit-app-region: no-drag; }
 
 /* Page transitions */
-.page-enter-active { animation: pageIn 0.18s ease-out; }
-.page-leave-active { animation: pageOut 0.1s ease-in; }
+.page-enter-active { animation: pageIn var(--duration-fast) var(--ease-out); }
+.page-leave-active { animation: pageOut var(--duration-instant) var(--ease-in); }
 @keyframes pageIn { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes pageOut { from { opacity: 1; } to { opacity: 0; } }
 
 /* Utility animations */
-.animate-fade-in { animation: fadeIn 0.25s ease-out; }
+.animate-fade-in { animation: fadeIn var(--duration-normal) var(--ease-out); }
 @keyframes fadeIn { from { opacity: 0; transform: translateY(3px); } to { opacity: 1; transform: translateY(0); } }
-.animate-slide-up { animation: slideUp 0.25s ease-out both; }
+.animate-slide-up { animation: slideUp var(--duration-normal) var(--ease-out) both; }
 @keyframes slideUp { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
 /* Tooltip — glass */
@@ -201,19 +196,19 @@
   position: fixed;
   z-index: 50;
   padding: 5px 10px;
-  font-size: 12px;
+  font-size: var(--text-caption);
   line-height: 1.4;
   color: var(--popover-foreground);
   background: var(--popover);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  backdrop-filter: blur(var(--glass-blur-subtle)) saturate(var(--glass-saturate));
+  -webkit-backdrop-filter: blur(var(--glass-blur-subtle)) saturate(var(--glass-saturate));
   border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  box-shadow: 0 4px 16px oklch(0 0 0 / 8%), 0 1px 3px oklch(0 0 0 / 6%);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--shadow-medium);
   pointer-events: none;
-  animation: tooltipIn 0.12s ease-out;
+  animation: tooltipIn var(--duration-instant) var(--ease-out);
 }
 .dark .tooltip {
-  box-shadow: 0 4px 16px oklch(0 0 0 / 30%), 0 1px 3px oklch(0 0 0 / 20%);
+  box-shadow: var(--shadow-medium);
 }
 @keyframes tooltipIn { from { opacity: 0; transform: translateX(-2px); } to { opacity: 1; transform: translateX(0); } }

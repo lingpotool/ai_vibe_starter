@@ -1,0 +1,174 @@
+/* ============================================================
+   设计令牌系统 — Design Tokens
+   ============================================================
+   所有视觉参数必须从此处引用，禁止硬编码数字。
+   与 Flutter 模板 (test_app3) 保持一致的设计语言。
+   ============================================================ */
+
+/* ── 排版系统 (Typography) ──
+   字体策略：
+     全局基础 → 系统字体栈（-apple-system → PingFang SC → Microsoft YaHei）
+     标题/品牌 → Inter（通过 font-family 指定）
+     代码 → JetBrains Mono / SF Mono
+
+   桌面端字号阶梯（px）— 信息密度高：
+     22  — 大标题（页面顶部，每页仅一个）
+     18  — 数据数字（统计卡片中的数值）
+     14  — 卡片标题 / 设置项标题
+     13  — 正文 / 描述文本
+     12  — 辅助文本 / 次要信息
+     11  — 标签 / 徽章 / 侧边栏导航
+     10  — 最小文本（版本号、代码片段）
+*/
+:root {
+  /* 字号 */
+  --text-page-title: 22px;
+  --text-stat-value: 18px;
+  --text-card-title: 14px;
+  --text-body: 13px;
+  --text-caption: 12px;
+  --text-label: 11px;
+  --text-micro: 10px;
+
+  /* 字重 */
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+
+  /* 行高 */
+  --leading-tight: 1.2;
+  --leading-snug: 1.3;
+  --leading-normal: 1.5;
+
+  /* 字间距 */
+  --tracking-tight: -0.5px;
+  --tracking-normal: -0.006em;
+
+  /* 字体族 */
+  --font-title: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-code: 'JetBrains Mono', 'SF Mono', 'Cascadia Code', 'Fira Code', monospace;
+
+  /* ── 间距系统 (Spacing) ──
+     基于 4px 网格
+       2   — xxs  极小（分割线间距、微调）
+       4   — xs   图标与文字间距
+       8   — sm   紧凑间距（同组元素之间）
+       12  — md   标准间距（卡片内元素之间）
+       16  — lg   宽松间距（区块之间）
+       20  — xl   区块间大间距
+       24  — xxl  页面水平边距
+       32  — xxxl 页面底部留白
+       48  — huge 特殊大间距
+  */
+  --space-xxs: 2px;
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 12px;
+  --space-lg: 16px;
+  --space-xl: 20px;
+  --space-xxl: 24px;
+  --space-xxxl: 32px;
+  --space-huge: 48px;
+
+  /* 页面级间距预设 */
+  --page-padding-x: var(--space-xxxl);
+  --page-padding-top: var(--space-xs);
+  --page-padding-bottom: var(--space-xxxl);
+  --card-padding: var(--space-xl);
+  --card-padding-compact-x: var(--space-lg);
+  --card-padding-compact-y: var(--space-md);
+
+  /* ── 圆角系统 (Radius) ──
+       4   — xs   代码片段、小标签、徽章
+       8   — sm   按钮、输入框、图标容器
+       12  — md   卡片、glass-card
+       16  — lg   大卡片、弹窗、模态框
+       24  — xl   圆形按钮、头像
+       999 — full 圆形（toggle switch 等）
+  */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-full: 999px;
+
+  /* ── 动效系统 (Motion) ──
+     时长层级：
+       instant  — 100ms  微交互（颜色变化、opacity）
+       fast     — 200ms  小元素（toggle、按钮状态、hover）
+       normal   — 300ms  标准过渡（页面切换、展开收起）
+       slow     — 500ms  大面积动画（模态弹出、全屏过渡）
+     曲线：
+       ease-out     — 进入动画（元素出现）
+       ease-in      — 退出动画（元素消失）
+       ease-in-out  — 状态切换（toggle、tab 切换）
+  */
+  --duration-instant: 100ms;
+  --duration-fast: 200ms;
+  --duration-normal: 300ms;
+  --duration-slow: 500ms;
+
+  --ease-out: cubic-bezier(0.0, 0.0, 0.2, 1.0);
+  --ease-in: cubic-bezier(0.4, 0.0, 1.0, 1.0);
+  --ease-in-out: cubic-bezier(0.4, 0.0, 0.2, 1.0);
+
+  /* ── 阴影系统 (Elevation) ──
+     毛玻璃风格下阴影要克制，主要靠模糊和透明度区分层级。
+       none   — 无阴影
+       low    — 卡片、列表项
+       medium — 浮动元素、下拉菜单、NavRail
+       high   — 弹窗、模态框、Toast
+  */
+  --shadow-low:
+    0 4px 16px oklch(0 0 0 / 3%),
+    0 1px 2px oklch(0 0 0 / 4%);
+  --shadow-medium:
+    0 8px 24px oklch(0 0 0 / 8%),
+    0 2px 4px oklch(0 0 0 / 4%);
+  --shadow-high:
+    0 12px 32px oklch(0 0 0 / 12%),
+    0 3px 6px oklch(0 0 0 / 6%);
+
+  /* ── 交互区域 (Touch/Click Targets) ──
+     桌面端使用鼠标，目标可以比移动端更小。
+       min-target   — 36px  最小点击目标
+       nav-rail     — 56px  NavRail 宽度
+       nav-button   — 36px  NavRail 按钮尺寸
+       title-bar    — 44px  标题栏高度（Windows/Linux）
+       title-bar-mac — 38px 标题栏高度（macOS）
+       window-btn   — 46px  窗口控制按钮宽度
+       settings-tile — 48px 设置项最小高度
+       icon-button  — 36px  图标按钮尺寸
+  */
+  --min-target: 36px;
+  --nav-rail-width: 56px;
+  --nav-button-size: 36px;
+  --title-bar-height: 44px;
+  --title-bar-height-mac: 38px;
+  --window-button-width: 46px;
+  --settings-tile-height: 48px;
+  --icon-button-size: 36px;
+
+  /* ── 毛玻璃参数 (Glass) ── */
+  --glass-blur: 40px;
+  --glass-blur-subtle: 20px;
+  --glass-blur-card: 24px;
+  --glass-saturate: 180%;
+  --glass-saturate-subtle: 150%;
+  --glass-saturate-card: 160%;
+}
+
+/* 暗色模式阴影覆盖 */
+.dark {
+  --shadow-low:
+    0 4px 16px oklch(0 0 0 / 15%),
+    0 1px 2px oklch(0 0 0 / 8%);
+  --shadow-medium:
+    0 8px 24px oklch(0 0 0 / 25%),
+    0 2px 4px oklch(0 0 0 / 12%);
+  --shadow-high:
+    0 12px 32px oklch(0 0 0 / 35%),
+    0 3px 6px oklch(0 0 0 / 15%);
+}

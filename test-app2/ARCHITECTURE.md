@@ -147,7 +147,8 @@ src/
 │   ├── env.d.ts                   # window.api 类型声明
 │   ├── index.html                 # HTML 模板
 │   ├── assets/styles/
-│   │   └── index.css              # 全局样式（Tailwind v4 + 玻璃态 + 色彩系统）
+│   │   ├── index.css              # 全局样式（Tailwind v4 + 玻璃态 + 色彩系统）
+│   │   └── theme.css              # 设计令牌（排版/间距/圆角/动效/阴影/交互区域）
 │   ├── components/
 │   │   ├── layout/
 │   │   │   ├── AppLayout.vue      # 主布局（背景渐变 + NavRail + 内容区）
@@ -260,9 +261,67 @@ app.whenReady() → bootstrap()
   6. initTray()                — 创建系统托盘
 ```
 
-## 五、视觉设计系统
+## 五、设计令牌系统
 
-### 5.1 玻璃态（Glassmorphism）
+所有视觉参数必须从设计令牌中引用，禁止硬编码数字。
+令牌定义在 `src/renderer/assets/styles/theme.css`，通过 CSS 自定义属性全局可用。
+
+| 令牌类别 | CSS 变量前缀 | 关键内容 |
+|----------|-------------|----------|
+| 色彩系统 | `--background` / `--foreground` / `--primary` 等 | oklch 色彩空间，亮/暗双主题，定义在 `index.css` |
+| 排版系统 | `--text-*` / `--font-*` / `--leading-*` | 系统字体栈 + Inter（标题）+ JetBrains Mono（代码），7级字号 22/18/14/13/12/11/10 |
+| 间距系统 | `--space-*` | 4px 网格，9级阶梯 xxs(2)~huge(48)，含页面/卡片预设 |
+| 圆角系统 | `--radius-*`（自定义） | 6级 xs(4)/sm(8)/md(12)/lg(16)/xl(24)/full(999) |
+| 动效系统 | `--duration-*` / `--ease-*` | 4级时长 instant(100ms)~slow(500ms)，3种曲线 |
+| 阴影系统 | `--shadow-*` | 3级 low/medium/high，适配亮暗主题 |
+| 交互区域 | `--min-target` / `--nav-rail-width` 等 | 最小目标 36px，NavRail 56px，标题栏 38/44px |
+| 毛玻璃 | `--glass-*` | blur/saturate 参数，3级强度 |
+
+### 使用示例
+
+```css
+/* ✅ 正确 */
+.my-card {
+  padding: var(--card-padding);
+  border-radius: var(--radius-md);
+  font-size: var(--text-body);
+  box-shadow: var(--shadow-low);
+  transition: all var(--duration-fast) var(--ease-out);
+}
+.page-title {
+  font-family: var(--font-title);
+  font-size: var(--text-page-title);
+  font-weight: var(--font-bold);
+  letter-spacing: var(--tracking-tight);
+}
+
+/* ❌ 禁止 */
+.my-card {
+  padding: 20px;
+  border-radius: 12px;
+  font-size: 13px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  transition: all 200ms ease-out;
+}
+```
+
+```vue
+<!-- ✅ 正确：在 Vue 组件中使用 -->
+<template>
+  <div :style="{ gap: 'var(--space-md)' }">
+    <h1 class="text-[length:var(--text-page-title)] font-bold">标题</h1>
+  </div>
+</template>
+
+<!-- 或使用 Tailwind 原子类（推荐） -->
+<div class="p-[var(--card-padding)] rounded-[var(--radius-md)]">
+```
+
+---
+
+## 六、视觉设计系统
+
+### 6.1 玻璃态（Glassmorphism）
 
 这是本项目的核心视觉特征。实现方式：
 
@@ -282,7 +341,7 @@ app.whenReady() → bootstrap()
 --card: oklch(1 0 0 / 6%);           /* 暗色：6% 不透明白 */
 ```
 
-### 5.2 平台窗口适配
+### 6.2 平台窗口适配
 
 窗口标题栏根据真实平台自动适配（不模拟，不切换）：
 
@@ -294,7 +353,7 @@ app.whenReady() → bootstrap()
 
 **暗色模式适配**：切换主题时通过 IPC 调用 `window:setTitleBarOverlay` 动态更新按钮颜色（亮色 `#555555`，暗色 `#cccccc`）。
 
-### 5.3 布局结构
+### 6.3 布局结构
 
 ```
 ┌──────────────────────────────────────────────┐
@@ -319,7 +378,7 @@ app.whenReady() → bootstrap()
 - 当前激活项左侧有 3px 蓝色指示条
 - 悬停显示玻璃态 tooltip
 
-### 5.4 Tailwind CSS v4 配置
+### 6.4 Tailwind CSS v4 配置
 
 本项目使用 Tailwind CSS v4 新语法，**没有** `tailwind.config.js` 文件。所有配置在 `index.css` 中：
 
@@ -337,7 +396,7 @@ import tailwindcss from '@tailwindcss/vite'
 plugins: [vue(), tailwindcss()]  // 不需要 PostCSS 配置
 ```
 
-## 六、状态管理
+## 七、状态管理
 
 ### app store（`stores/app.ts`）
 
@@ -355,7 +414,7 @@ plugins: [vue(), tailwindcss()]  // 不需要 PostCSS 配置
 
 预留的标签页管理，支持添加/删除/切换标签。当前布局未使用标签栏，但 store 已就绪。
 
-## 七、路由系统
+## 八、路由系统
 
 路由使用 **Hash 模式**（Electron file:// 协议兼容）。
 
@@ -378,7 +437,7 @@ meta: {
 3. NavRail 会自动显示新的导航项（需要 `meta.title` 和 `meta.icon`）
 4. 在 `i18n/locales/` 中添加对应的翻译 key
 
-## 八、国际化
+## 九、国际化
 
 使用 vue-i18n v11 Composition API 模式。
 
@@ -402,7 +461,7 @@ const { t } = useI18n()
 </template>
 ```
 
-## 九、Composables 速查
+## 十、Composables 速查
 
 所有 composables 封装了 `window.api` 的调用，在 Vue 组件中直接使用：
 
@@ -417,7 +476,7 @@ const { t } = useI18n()
 | `useStorage()` | 主进程存储 | `const { get, set } = useStorage()` |
 | `useTheme()` | 主题切换 | `const { isDark, toggle } = useTheme()` |
 
-## 十、开发命令
+## 十一、开发命令
 
 ```bash
 pnpm dev        # 启动开发模式（HMR 热更新）
@@ -434,7 +493,7 @@ $env:ELECTRON_MIRROR="https://npmmirror.com/mirrors/electron/"
 pnpm dev
 ```
 
-## 十一、构建配置
+## 十二、构建配置
 
 ### electron-vite 配置（`electron.vite.config.ts`）
 
@@ -452,7 +511,7 @@ pnpm dev
 - `tsconfig.json`：主配置，覆盖所有 `src/` 文件，`moduleResolution: "bundler"`
 - `tsconfig.node.json`：仅覆盖 `electron.vite.config.ts`
 
-## 十二、开发约定
+## 十三、开发约定
 
 1. **跨平台优先**：每个功能必须同时在 Windows / macOS / Linux 上可用，不允许单平台实现
 2. **组件风格**：全部使用 `<script setup lang="ts">` + Composition API
